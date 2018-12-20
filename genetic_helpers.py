@@ -68,12 +68,18 @@ def decode_blueprint(blueprint):
 
 	return perplexity , blueprint_list
 
-# function that determines whether a decoded blueprint is valid
-def is_valid_structure(blueprint_structure):
-	if len(blueprint_structure) > 0:
-		return True
-	else:
-		return False
+# function that ensures a perplexity between 5 and 50
+def _is_valid_structure(blueprint):
+	MIN_PERPLEXITY = 5
+	MAX_PERPLEXITY = 50
+	perp_bits = blueprint[:8]
+	intval = int(perp_bits , 2)
+	if intval < 5:
+		perp_bits = '{0:08b}'.format(MIN_PERPLEXITY)
+	elif intval > 50:
+		perp_bits = '{0:08b}'.format(MAX_PERPLEXITY)
+
+	return perp_bits + blueprint[8:]
 
 
 # function that accepts two bitstring blueprints, and randomly crossbreeds them, returning two new bitstrings
@@ -91,7 +97,7 @@ def breed_bitstrings(b1 , b2):
 	new_btstr1 = btstr1[:splice_point] + btstr2[splice_point:]
 	new_btstr2 = btstr2[:splice_point] + btstr1[splice_point:]
 
-	return new_btstr1 , new_btstr2
+	return _is_valid_structure(new_btstr1) , _is_valid_structure(new_btstr2)
 
 
 # function that returns a random value within range
@@ -132,7 +138,7 @@ def mutate(bitstring, mutation_chance):
 		else:
 			mutant = mutant + str(bit)
 
-	return mutant
+	return _is_valid_structure(mutant)
 
 
 
@@ -140,8 +146,14 @@ def mutate(bitstring, mutation_chance):
 def custom_mutate_round(random_value_float , mutation_chance):
 	return (random_value_float <= mutation_chance)
 
-
-
+# returns binary
+def _bitstring_to_binary(bitstring):
+    value = 0
+    place_counter = 0
+    for bit in reversed(bitstring):
+        value = 2**value * int(bit)
+        place_counter = place_counter + 1
+    return value
 
 
 
