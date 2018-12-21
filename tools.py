@@ -16,3 +16,8 @@ def write_csv(input_data, specified_filename):
 def write_test_specs(path , num_gens , gensize):
 	path = path / 'test_specs'
 	path.write_bytes(bytes([num_gens,gensize]))
+
+# writes dna, as text, to directory located at path
+def write_dna(directory, dna):
+	path = directory / 'dna.dna'
+	path.write_text(dna)

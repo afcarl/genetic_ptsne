@@ -141,6 +141,22 @@ def mutate(bitstring, mutation_chance):
 	return _is_valid_structure(mutant)
 
 
+# function to return a generation of children of size gensize. If the list of
+# parents is empty, this will return a completely new list of dna, otherwise
+# it will breed from parents. For the moment a generation should be even.
+def breed_generation(gensize, parents=None):
+	generation = []
+	if parents is None:
+		for i in range(gensize):
+			generation.append(generate_blueprint())
+	else:
+		generation.append(parents[0])
+		generation.append(parents[1])
+		for i in range((gensize - 2) // 2):
+			c1,c2 = breed_bitstrings(parents[0] , parents[1])
+			generation.append(c1)
+			generation.append(c2)
+	return generation
 
 # custom rounding function for mutating bitstrings
 def custom_mutate_round(random_value_float , mutation_chance):
@@ -171,6 +187,13 @@ def view_blueprint_bytes(blueprint, num_layers=MAX_POSSIBLE_LAYERS):
 		layer_bits = blueprint[start:end]
 		display = layer_bits[:7] + " " + layer_bits[7:]
 		print(layer_bits)
+
+def human_readable(dna):
+	print(dna[:8])
+	dna = dna[8:]
+	for i in range(len(dna) // (BYTES_PER_LAYER * 8)):
+		print(dna[:8] , " , " , dna[8:16])
+		dna = dna[16:]
 
 def random_bitstring(size):
 	bitstring = ''

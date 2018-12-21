@@ -7,9 +7,10 @@ pass
 import tools
 from pathlib import Path
 import os
+import genetic_helpers as gh
 
 # run the breeding for GENERATIONS with GENSIZE with TESTNAME in DIRNAME
-def run_test(num_generations , gensize , testname , target_dir_name):
+def run_test(num_generations , gensize , testname , target_dir_name, test_data):
     # create the target directory if it doesn't exist
     current_dir = Path('.')
     target_dir = Path('.') / target_dir_name
@@ -36,6 +37,9 @@ def run_test(num_generations , gensize , testname , target_dir_name):
     # for ease of future reading, this will be called 'test_specs'
     tools.write_test_specs(test_dir, num_generations, gensize)
 
+    # get our first batch of dna
+    child_dna = gh.breed_generation(gensize)
+
     # for reasons of directory nomenclacture, we use 1 as our base index
     for generation in [i+1 for i in range(num_generations)]:
         generation_name = 'generation_' + str(generation)
@@ -43,16 +47,23 @@ def run_test(num_generations , gensize , testname , target_dir_name):
         gen_dir = test_dir / generation_name
         os.mkdir(str(gen_dir))
         # same thing with children
-        for child in [k+1 for k in range(gensize)]:
-            child_name = "child_" + str(child)
+        for child_num, dna in [(i+1,j) for (i,j) in enumerate(child_dna)]:
+            child_name = "child_" + str(child_num)
             # make a folder for the child
             child_dir = gen_dir / child_name
             os.mkdir(str(child_dir))
+            train_child(child_dir , dna , test_data)
 
-def train_child(generation_directory , child_name)
+def train_child(child_dir_path , dna, test_data):
+    # translate our dna
+    # create a network of this name with our stats
+    # train it on test_data
+    # write out our loss history
+    # save our model
+    # write our dna
+    tools.write_dna(child_dir_path , dna)
 
-# for each generation, create a subfolder in dirname/testname
-    # for each member of a generation create subfolder in DIRNAME/childname
-        # in this folder create dummy.model, dummy.losslog dummy.dna
+
+
 if __name__ == '__main__':
-    run_test(1,1,'DELETE','DUMMY')
+    run_test(1,1,'DELETE','DUMMY' , "")
